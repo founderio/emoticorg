@@ -65,7 +65,7 @@ namespace Emoticorg.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap device_desktop {
             get {
-                object obj = ResourceManager.GetObject("device-desktop", resourceCulture);
+                object obj = ResourceManager.GetObject("device_desktop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

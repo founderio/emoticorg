@@ -100,6 +100,10 @@
     <Content Include="lib\Semver.dll" />
     <Content Include="lib\sqlite3.dll" />
     <Content Include="lib\System.Data.SQLite.DLL" />
+    <None Include="Resources\device-desktop.png" />
+    <None Include="Resources\plus.png" />
+    <None Include="Resources\x.png" />
+    <None Include="Resources\search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

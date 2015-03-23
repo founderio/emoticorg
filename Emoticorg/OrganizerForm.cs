@@ -13,7 +13,12 @@ namespace Emoticorg
 	{
 		public OrganizerForm()
 		{
-			InitializeComponent();
+            InitializeComponent();
 		}
+
+        private void OrganizerForm_Load(object sender, EventArgs e)
+        {
+
+        }
 	}
 }

@@ -8,10 +8,14 @@ namespace Emoticorg
 {
     public class Emoticon
     {
+        public const int TYPE_ASCII = 0;
+        public const int TYPE_IMAGE = 1;
+
         public string guid { get; set; }
         public string name { get; set; }
         public string category { get; set; }
         public byte[] data { get; set; }
         public long lastUsed { get; set; }
+        public int type { get; set; }
     }
 }

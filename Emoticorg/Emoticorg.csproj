@@ -88,8 +88,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CatchingPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditForm.Designer.cs">
+      <DependentUpon>EditForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emoticon.cs" />
     <Compile Include="EmoticonStore.cs" />
+    <Compile Include="MemoryImage.cs" />
     <Compile Include="OrganizerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +108,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="EditForm.resx">
+      <DependentUpon>EditForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OrganizerForm.resx">
       <DependentUpon>OrganizerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -144,6 +157,9 @@
     <Content Include="lib\Octokit.dll" />
     <Content Include="lib\Semver.dll" />
     <Content Include="lib\System.Data.SQLite.DLL" />
+    <None Include="Resources\clippy_mirror.png" />
+    <None Include="Resources\clippy.png" />
+    <None Include="Resources\file-symlink-file_64_gray.png" />
     <None Include="Resources\device-desktop.png" />
     <None Include="Resources\plus.png" />
     <None Include="Resources\x.png" />

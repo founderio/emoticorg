@@ -152,7 +152,16 @@ namespace Emoticorg
                 {
                     data = (byte[])value;
                 }
-                long lastUsed = reader.GetInt64(reader.GetOrdinal("lastUsed"));
+                value = reader.GetValue(reader.GetOrdinal("lastUsed"));
+                long lastUsed;
+                if (value == DBNull.Value)
+                {
+                    lastUsed = 0;
+                }
+                else
+                {
+                    lastUsed = (long)value;
+                }
 
                 emot.guid = guid;
                 emot.name = name;
@@ -175,13 +184,13 @@ namespace Emoticorg
                     emot.guid = Guid.NewGuid().ToString();
                     emot.lastUsed = 0;
                     command.CommandText = String.Format("INSERT INTO Emoticon (guid, name, category, lastUsed) VALUES ('{0}', '{1}', '{2}', {3});",
-                        emot.guid, emot.name, emot.category, DBNull.Value);
+                        emot.guid, emot.name, emot.category, "NULL");
 
                 }
                 else
                 {
                     command.CommandText = String.Format("UPDATE Emoticon SET name='{1}', category='{2}', lastUsed={3} WHERE guid='{0}';",
-                        emot.guid, emot.name, emot.category, DBNull.Value);
+                        emot.guid, emot.name, emot.category, emot.lastUsed > 0 ? emot.lastUsed.ToString() : "NULL");
                 }
                 command.ExecuteNonQuery();
             }

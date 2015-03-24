@@ -29,18 +29,18 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Recent Emoticons");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("All Emoticons");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Recent Emoticons");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("All Emoticons");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrganizerForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.listView1 = new System.Windows.Forms.ListView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbSearch = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,17 +80,17 @@
             this.treeView1.ImageList = this.imageList1;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            treeNode3.ImageKey = "history";
-            treeNode3.Name = "Recent";
-            treeNode3.SelectedImageKey = "history";
-            treeNode3.Text = "Recent Emoticons";
-            treeNode4.ImageKey = "database";
-            treeNode4.Name = "All";
-            treeNode4.SelectedImageKey = "database";
-            treeNode4.Text = "All Emoticons";
+            treeNode1.ImageKey = "history";
+            treeNode1.Name = "Recent";
+            treeNode1.SelectedImageKey = "history";
+            treeNode1.Text = "Recent Emoticons";
+            treeNode2.ImageKey = "database";
+            treeNode2.Name = "All";
+            treeNode2.SelectedImageKey = "database";
+            treeNode2.Text = "All Emoticons";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3,
-            treeNode4});
+            treeNode1,
+            treeNode2});
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.Size = new System.Drawing.Size(201, 262);
             this.treeView1.TabIndex = 0;
@@ -116,6 +116,7 @@
             this.listView1.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.listView1_CacheVirtualItems);
             this.listView1.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.listView1_RetrieveVirtualItem);
             this.listView1.SearchForVirtualItem += new System.Windows.Forms.SearchForVirtualItemEventHandler(this.listView1_SearchForVirtualItem);
+            this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             // 
             // toolStrip1
             // 
@@ -132,6 +133,16 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // tbSearch
+            // 
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(100, 25);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -139,11 +150,6 @@
             this.toolStripLabel1.Name = "toolStripLabel1";
             this.toolStripLabel1.Size = new System.Drawing.Size(16, 22);
             this.toolStripLabel1.Text = "Search";
-            // 
-            // tbSearch
-            // 
-            this.tbSearch.Name = "tbSearch";
-            this.tbSearch.Size = new System.Drawing.Size(100, 25);
             // 
             // toolStripButton1
             // 
@@ -155,11 +161,6 @@
             this.toolStripButton1.Text = "Clear Search";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripButton2
             // 
             this.toolStripButton2.Image = global::Emoticorg.Properties.Resources.plus;
@@ -167,6 +168,7 @@
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(105, 22);
             this.toolStripButton2.Text = "New Emoticon";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripDropDownButton1
             // 
@@ -212,7 +214,7 @@
             this.ClientSize = new System.Drawing.Size(853, 262);
             this.Controls.Add(this.splitContainer1);
             this.Name = "OrganizerForm";
-            this.Text = "Form1";
+            this.Text = "Organizer";
             this.Load += new System.EventHandler(this.OrganizerForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);

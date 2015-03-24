@@ -99,6 +99,22 @@ namespace Emoticorg
             cache = store.PartialQueryEmoticons(query, offset, count);
         }
 
+        private Emoticon RetrieveEmoticon(int index)
+        {
+            if (index < cacheOffset || index >= cacheOffset + cache.Count)
+            {
+                LoadCache(index, 50);
+            }
+            if (index >= cacheOffset + cache.Count)
+            {
+                return null;
+            }
+            else
+            {
+               return cache[cacheOffset + index];
+            }
+        }
+
         private void listView1_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
         {
             
@@ -106,18 +122,15 @@ namespace Emoticorg
 
         private void listView1_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            if (e.ItemIndex < cacheOffset || e.ItemIndex >= cacheOffset + cache.Count)
-            {
-                LoadCache(e.ItemIndex, 50);
-            }
+            Emoticon emoticon = RetrieveEmoticon(e.ItemIndex);
+            
             ListViewItem item = new ListViewItem();
-            if (e.ItemIndex >= cacheOffset + cache.Count)
+            if (emoticon == null)
             {
                 item.Text = "N/A";
             }
             else
             {
-                Emoticon emoticon = cache[cacheOffset + e.ItemIndex];
                 item.Text = emoticon.name;
             }
             e.Item = item;
@@ -126,6 +139,30 @@ namespace Emoticorg
         private void listView1_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
         {
             
+        }
+
+
+        EditForm editForm = new EditForm();
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            Emoticon emoticon = editForm.ShowNew(this);
+            if (emoticon != null)
+            {
+                store.UpdateEmoticon(emoticon);
+                PopulateView(this.query);
+            }
+        }
+
+        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int idx = listView1.SelectedIndices[0];
+                Emoticon emot = RetrieveEmoticon(idx);
+                editForm.ShowEdit(this, emot);
+                store.UpdateEmoticon(emot);
+            }
         }
     }
 }

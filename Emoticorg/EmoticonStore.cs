@@ -62,7 +62,7 @@ namespace Emoticorg
                         command.CommandText = "INSERT INTO Emoticorg (name, value) VALUES ('version', '" + VERSION + "');";
                         command.ExecuteNonQuery();
 
-                        command.CommandText = "CREATE TABLE Emoticon (guid TEXT, name TEXT, category TEXT, data BLOB, lastUsed INTEGER, PRIMARY KEY(guid));";
+                        command.CommandText = "CREATE TABLE Emoticon (guid TEXT, name TEXT, category TEXT, data BLOB, lastUsed INTEGER, type INTEGER, PRIMARY KEY(guid));";
                         command.ExecuteNonQuery();
 
                         command.CommandText = "CREATE TABLE EmoticonKeywords (guid TEXT, keyword TEXT, PRIMARY KEY(guid, keyword));";
@@ -162,10 +162,21 @@ namespace Emoticorg
                 {
                     lastUsed = (long)value;
                 }
+                int type;
+                value = reader.GetValue(reader.GetOrdinal("type"));
+                if (value == DBNull.Value)
+                {
+                    type = -1;
+                }
+                else
+                {
+                    type = (int)(long)value;
+                }
 
                 emot.guid = guid;
                 emot.name = name;
                 emot.category = category;
+                emot.type = type;
                 emot.data = data;
                 emot.lastUsed = lastUsed;
 
@@ -183,14 +194,27 @@ namespace Emoticorg
                 {
                     emot.guid = Guid.NewGuid().ToString();
                     emot.lastUsed = 0;
-                    command.CommandText = String.Format("INSERT INTO Emoticon (guid, name, category, lastUsed) VALUES ('{0}', '{1}', '{2}', {3});",
-                        emot.guid, emot.name, emot.category, "NULL");
-
+                    command.CommandText = "INSERT INTO Emoticon (guid, name, category, lastUsed, type, data) VALUES (@guid, @name, @category, @lastUsed, @type, @data);";
+                    command.Prepare();
                 }
                 else
                 {
-                    command.CommandText = String.Format("UPDATE Emoticon SET name='{1}', category='{2}', lastUsed={3} WHERE guid='{0}';",
-                        emot.guid, emot.name, emot.category, emot.lastUsed > 0 ? emot.lastUsed.ToString() : "NULL");
+                    command.CommandText = "UPDATE Emoticon SET name=@name, category=@category, lastUsed=@lastUsed, type=@type, data=@data WHERE guid=@guid;";
+                    command.Prepare();
+
+                }
+                command.Parameters.Add(new SQLiteParameter("guid", emot.guid));
+                command.Parameters.Add(new SQLiteParameter("name", emot.name));
+                command.Parameters.Add(new SQLiteParameter("category", emot.category));
+                command.Parameters.Add(new SQLiteParameter("type", emot.type));
+                command.Parameters.Add(new SQLiteParameter("data", emot.data));
+                if (emot.lastUsed > 0)
+                {
+                    command.Parameters.Add(new SQLiteParameter("lastUsed", emot.lastUsed));
+                }
+                else
+                {
+                    command.Parameters.Add(new SQLiteParameter("lastUsed", DBNull.Value));
                 }
                 command.ExecuteNonQuery();
             }

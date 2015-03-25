@@ -103,6 +103,7 @@ namespace Emoticorg
         {
             emoticon.name = tbName.Text;
             emoticon.category = tbCategory.Text;
+            emoticon.type = lockedType;
             if (emoticon.type == Emoticon.TYPE_ASCII)
             {
                 emoticon.data = UnicodeEncoding.UTF8.GetBytes(TextData);

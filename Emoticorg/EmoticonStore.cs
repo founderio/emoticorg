@@ -99,7 +99,7 @@ namespace Emoticorg
             }
         }
 
-        private int CountQuery(string table, string query)
+        private int CountQuery(string table, string query, string filter)
         {
             using (DbCommand command = conn.CreateCommand())
             {
@@ -110,21 +110,29 @@ namespace Emoticorg
                     commandText = commandText.Substring(0, pos);
                 }
                 command.CommandText = commandText;
+                if (filter != null)
+                {
+                    command.Parameters.Add(new SQLiteParameter("filter", '%' + filter + '%'));
+                }
 
                 return (int)(long)command.ExecuteScalar();
             }
         }
 
-        public int CountQueryEmoticons(string query)
+        public int CountQueryEmoticons(string query, string filter)
         {
-            return this.CountQuery("Emoticon", query);
+            return this.CountQuery("Emoticon", query, filter);
         }
 
-        public List<Emoticon> PartialQueryEmoticons(string query, int offset, int count)
+        public List<Emoticon> PartialQueryEmoticons(string query, string filter, int offset, int count)
         {
             using (DbCommand command = conn.CreateCommand())
             {
                 command.CommandText = "SELECT * FROM Emoticon " + query + " LIMIT " + count + " OFFSET " + offset;
+                if (filter != null)
+                {
+                    command.Parameters.Add(new SQLiteParameter("filter", '%' + filter + '%'));
+                }
                 using (DbDataReader reader = command.ExecuteReader())
                 {
                     return ParseEmoticonResult(reader);
@@ -216,6 +224,17 @@ namespace Emoticorg
                 {
                     command.Parameters.Add(new SQLiteParameter("lastUsed", DBNull.Value));
                 }
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void UseEmoticon(string guid)
+        {
+            using (DbCommand command = conn.CreateCommand())
+            {
+                command.CommandText = "UPDATE Emoticon SET lastUsed=@lastUsed WHERE guid=@guid";
+                command.Parameters.Add(new SQLiteParameter("guid", guid));
+                command.Parameters.Add(new SQLiteParameter("lastUsed", DateTime.Now.Ticks));
                 command.ExecuteNonQuery();
             }
         }

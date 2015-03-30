@@ -16,9 +16,20 @@ namespace Emoticorg
         private EmoticonStore store;
         private UpdateChecker checker;
 
+        private string filter = "";
+        private string query;
+        private int count;
+        private int cacheOffset;
+        private List<Emoticon> cache;
+        private Brush fontBrush = Brushes.Black;
+        private EditForm editForm;
+
         public OrganizerForm()
         {
+            cache = new List<Emoticon>();
             InitializeComponent();
+            editForm = new EditForm();
+            fontBrush = new SolidBrush(listView1.ForeColor);
         }
 
         private void OrganizerForm_Load(object sender, EventArgs e)
@@ -54,39 +65,100 @@ namespace Emoticorg
             }
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void OrganizerForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            store.Close();
+            fontBrush.Dispose();
+            editForm.Dispose();
+        }
+
+        private void tbClear_Click(object sender, EventArgs e)
         {
             tbSearch.Clear();
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            string query;
-            if (e.Node.Name == "Recent")
+            UpdateQuery();
+        }
+
+        private void treeView1_Enter(object sender, EventArgs e)
+        {
+            listView1.Focus();
+        }
+
+        private void tbSearch_TextChanged(object sender, EventArgs e)
+        {
+            this.filter = tbSearch.Text;
+            UpdateQuery();
+        }
+
+        private void UpdateQuery()
+        {
+            string special;
+            string category;
+            if (treeView1.SelectedNode == null)
             {
-               // 96 hours (for now)
-                query = "WHERE " + DateTime.Now.Ticks + " - lastUsed < 345600000000 ORDER BY lastUsed DESC";
-            }
-            else if (e.Node.Name == "All")
-            {
-                query = "ORDER BY name ASC";
+                special = "All";
+                category = null;
             }
             else
             {
-                query = "WHERE category = '" + e.Node.Tag + "' ORDER BY name ASC";
+                special = treeView1.SelectedNode.Name;
+                category = (string)treeView1.SelectedNode.Tag;
+            }
+            string query;
+            bool useFilter = filter != null && filter.Length > 0;
+            string filterString = "name LIKE @filter ";
+
+            if (special == "Recent")
+            {
+                query = "WHERE ";
+                if (useFilter)
+                {
+                    query += filterString + "AND ";
+                }
+                // 96 hours (for now)
+                query += DateTime.Now.Ticks + " - lastUsed < 345600000000 ORDER BY lastUsed DESC";
+            }
+            else if (special == "All")
+            {
+                if (useFilter)
+                {
+                    query = "WHERE " + filterString + " ORDER BY name ASC";
+                }
+                else
+                {
+                    query = "ORDER BY name ASC";
+                }
+            }
+            else
+            {
+                query = "WHERE ";
+                if (useFilter)
+                {
+                    query += filterString + "AND ";
+                }
+                // 96 hours (for now)
+                query += "category = '" + category + "' ORDER BY name ASC";
             }
             PopulateView(query);
         }
 
-        private string query;
-        private int count;
-        private int cacheOffset;
-        private List<Emoticon> cache = new List<Emoticon>();
 
         private void PopulateView(string query)
         {
             this.query = query;
-            this.count = store.CountQueryEmoticons(query);
+            bool useFilter = filter != null && filter.Length > 0;
+            if (useFilter)
+            {
+                this.count = store.CountQueryEmoticons(query, filter);
+            }
+            else
+            {
+                this.count = store.CountQueryEmoticons(query, null);
+            }
+            
             this.cache.Clear();
             this.cacheOffset = 0;
             listView1.VirtualListSize = count;
@@ -96,7 +168,15 @@ namespace Emoticorg
         private void LoadCache(int offset, int count)
         {
             this.cacheOffset = offset;
-            cache = store.PartialQueryEmoticons(query, offset, count);
+            bool useFilter = filter != null && filter.Length > 0;
+            if (useFilter)
+            {
+                cache = store.PartialQueryEmoticons(query, filter, offset, count);
+            }
+            else
+            {
+                cache = store.PartialQueryEmoticons(query, null, offset, count);
+            }
         }
 
         private Emoticon RetrieveEmoticon(int index)
@@ -115,11 +195,6 @@ namespace Emoticorg
             }
         }
 
-        private void listView1_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
-        {
-            
-        }
-
         private void listView1_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
             Emoticon emoticon = RetrieveEmoticon(e.ItemIndex);
@@ -132,17 +207,39 @@ namespace Emoticorg
             else
             {
                 item.Text = emoticon.name;
+                item.ImageIndex = 1;
             }
             e.Item = item;
         }
 
-        private void listView1_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
+
+        private void listView1_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
-            
+            Emoticon emoticon = RetrieveEmoticon(e.ItemIndex);
+            if (emoticon != null)
+            {
+                if (emoticon.type == Emoticon.TYPE_ASCII)
+                {
+                    string text = UnicodeEncoding.UTF8.GetString(emoticon.data);
+                    e.Graphics.DrawString(text, listView1.Font, fontBrush, this.listView1.GetItemRect(e.ItemIndex, ItemBoundsPortion.Icon));
+                }
+                else if (emoticon.type == Emoticon.TYPE_IMAGE)
+                {
+                    MemoryImage img = new MemoryImage(emoticon.data);
+                    Clipboard.SetImage(img.Image);
+                    e.Graphics.DrawImage(img.Image, this.listView1.GetItemRect(e.ItemIndex, ItemBoundsPortion.Icon));
+                    img.Dispose();
+                }
+            }
+            e.DrawFocusRectangle();
+            if (listView1.View != View.Details)
+            {
+                e.DrawText(TextFormatFlags.Bottom);
+                //e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
+            }
         }
 
 
-        EditForm editForm = new EditForm();
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
@@ -162,6 +259,41 @@ namespace Emoticorg
                 Emoticon emot = RetrieveEmoticon(idx);
                 editForm.ShowEdit(this, emot);
                 store.UpdateEmoticon(emot);
+            }
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            CopySelected();
+        }
+
+        private void CopySelected()
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int idx = listView1.SelectedIndices[0];
+                Emoticon emot = RetrieveEmoticon(idx);
+                if (emot.type == Emoticon.TYPE_ASCII)
+                {
+                    string text = UnicodeEncoding.UTF8.GetString(emot.data);
+                    Clipboard.SetText(text);
+                }
+                else if (emot.type == Emoticon.TYPE_IMAGE)
+                {
+                    MemoryImage img = new MemoryImage(emot.data);
+                    Clipboard.SetImage(img.Image);
+                    img.Dispose();
+                }
+                store.UseEmoticon(emot.guid);
+                PopulateView(query);
+            }
+        }
+
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C && e.Control)
+            {
+                CopySelected();
             }
         }
     }

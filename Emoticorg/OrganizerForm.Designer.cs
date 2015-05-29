@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Recent Emoticons");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("All Emoticons");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Recent Emoticons");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("All Emoticons");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrganizerForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
@@ -42,8 +42,8 @@
             this.tbSearch = new System.Windows.Forms.ToolStripTextBox();
             this.tbClear = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.btnCopy = new System.Windows.Forms.ToolStripButton();
+            this.btnNewEmoticon = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportRawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,17 +83,17 @@
             this.treeView1.ImageList = this.imageList1;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            treeNode1.ImageKey = "history";
-            treeNode1.Name = "Recent";
-            treeNode1.SelectedImageKey = "history";
-            treeNode1.Text = "Recent Emoticons";
-            treeNode2.ImageKey = "database";
-            treeNode2.Name = "All";
-            treeNode2.SelectedImageKey = "database";
-            treeNode2.Text = "All Emoticons";
+            treeNode3.ImageKey = "history";
+            treeNode3.Name = "Recent";
+            treeNode3.SelectedImageKey = "history";
+            treeNode3.Text = "Recent Emoticons";
+            treeNode4.ImageKey = "database";
+            treeNode4.Name = "All";
+            treeNode4.SelectedImageKey = "database";
+            treeNode4.Text = "All Emoticons";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
+            treeNode3,
+            treeNode4});
             this.treeView1.SelectedImageIndex = 0;
             this.treeView1.Size = new System.Drawing.Size(201, 349);
             this.treeView1.TabIndex = 0;
@@ -139,8 +139,8 @@
             this.tbSearch,
             this.tbClear,
             this.toolStripSeparator1,
-            this.toolStripButton3,
-            this.toolStripButton2,
+            this.btnCopy,
+            this.btnNewEmoticon,
             this.toolStripDropDownButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -177,24 +177,24 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButton3
+            // btnCopy
             // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton3.Image = global::Emoticorg.Properties.Resources.clippy;
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton3.Text = "btnCopy";
-            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+            this.btnCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnCopy.Image = global::Emoticorg.Properties.Resources.clippy;
+            this.btnCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.Size = new System.Drawing.Size(23, 22);
+            this.btnCopy.Text = "Copy";
+            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
             // 
-            // toolStripButton2
+            // btnNewEmoticon
             // 
-            this.toolStripButton2.Image = global::Emoticorg.Properties.Resources.plus;
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(105, 22);
-            this.toolStripButton2.Text = "New Emoticon";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            this.btnNewEmoticon.Image = global::Emoticorg.Properties.Resources.plus;
+            this.btnNewEmoticon.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnNewEmoticon.Name = "btnNewEmoticon";
+            this.btnNewEmoticon.Size = new System.Drawing.Size(105, 22);
+            this.btnNewEmoticon.Text = "New Emoticon";
+            this.btnNewEmoticon.Click += new System.EventHandler(this.btnNewEmoticon_Click);
             // 
             // toolStripDropDownButton1
             // 
@@ -263,7 +263,7 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripTextBox tbSearch;
         private System.Windows.Forms.ToolStripButton tbClear;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripButton btnNewEmoticon;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
@@ -271,7 +271,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton btnCopy;
         private System.Windows.Forms.ImageList imageList2;
 	}
 }

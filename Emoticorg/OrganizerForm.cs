@@ -191,7 +191,7 @@ namespace Emoticorg
             }
             else
             {
-               return cache[cacheOffset + index];
+                return cache[index - cacheOffset];
             }
         }
 
@@ -239,18 +239,6 @@ namespace Emoticorg
             }
         }
 
-
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            Emoticon emoticon = editForm.ShowNew(this);
-            if (emoticon != null)
-            {
-                store.UpdateEmoticon(emoticon);
-                PopulateView(this.query);
-            }
-        }
-
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (listView1.SelectedIndices.Count > 0)
@@ -262,7 +250,25 @@ namespace Emoticorg
             }
         }
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C && e.Control)
+            {
+                CopySelected();
+            }
+        }
+
+        private void btnNewEmoticon_Click(object sender, EventArgs e)
+        {
+            Emoticon emoticon = editForm.ShowNew(this);
+            if (emoticon != null)
+            {
+                store.UpdateEmoticon(emoticon);
+                PopulateView(this.query);
+            }
+        }
+
+        private void btnCopy_Click(object sender, EventArgs e)
         {
             CopySelected();
         }
@@ -286,14 +292,6 @@ namespace Emoticorg
                 }
                 store.UseEmoticon(emot.guid);
                 PopulateView(query);
-            }
-        }
-
-        private void listView1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.C && e.Control)
-            {
-                CopySelected();
             }
         }
     }

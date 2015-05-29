@@ -118,8 +118,23 @@ namespace Emoticorg
                 else
                 {
                     using (MemoryStream ms = new MemoryStream()) {
-                        img.Save(ms, img.RawFormat);
-                        emoticon.data = ms.ToArray();
+                        try
+                        {
+                            ImageFormat imgRawFormat = img.RawFormat;
+                            if (imgRawFormat == null)
+                            {
+                                img.Save(ms, ImageFormat.Png);
+                            }
+                            else
+                            {
+                                img.Save(ms, img.RawFormat);
+                            }
+                            emoticon.data = ms.ToArray();
+                        }
+                        catch (Exception e)
+                        {
+                            MessageBox.Show("Saving the image failed: " + e.Message, "Error saving the image", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
                 SetImageFromBytes(emoticon.data);

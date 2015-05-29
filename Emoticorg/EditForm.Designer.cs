@@ -34,28 +34,28 @@
             this.tbCategory = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new CatchingPictureBox();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.tsbCopyText = new System.Windows.Forms.ToolStripButton();
+            this.tsbPasteText = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsbCopyImage = new System.Windows.Forms.ToolStripButton();
             this.tsbPasteImage = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.lblLastUsed = new System.Windows.Forms.Label();
             this.lblGuid = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.tsbCopyText = new System.Windows.Forms.ToolStripButton();
-            this.tsbPasteText = new System.Windows.Forms.ToolStripButton();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.pictureBox1 = new Emoticorg.CatchingPictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.toolStrip1.SuspendLayout();
             this.toolStrip2.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // tbName
@@ -115,6 +115,9 @@
             // 
             // textBox1
             // 
+            this.textBox1.AcceptsReturn = true;
+            this.textBox1.AcceptsTab = true;
+            this.textBox1.AllowDrop = true;
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBox1.Location = new System.Drawing.Point(0, 25);
             this.textBox1.Multiline = true;
@@ -123,19 +126,45 @@
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
-            // pictureBox1
+            // toolStrip2
             // 
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 25);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(244, 313);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 4;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragDrop);
-            this.pictureBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragEnter);
-            this.pictureBox1.DragLeave += new System.EventHandler(this.pictureBox1_DragLeave);
+            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbCopyText,
+            this.tsbPasteText,
+            this.toolStripLabel1});
+            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.Size = new System.Drawing.Size(238, 25);
+            this.toolStrip2.TabIndex = 1;
+            this.toolStrip2.Text = "toolStrip2";
+            // 
+            // tsbCopyText
+            // 
+            this.tsbCopyText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbCopyText.Image = global::Emoticorg.Properties.Resources.clippy;
+            this.tsbCopyText.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbCopyText.Name = "tsbCopyText";
+            this.tsbCopyText.Size = new System.Drawing.Size(23, 22);
+            this.tsbCopyText.Text = "Copy Text";
+            this.tsbCopyText.Click += new System.EventHandler(this.tsbCopyText_Click);
+            // 
+            // tsbPasteText
+            // 
+            this.tsbPasteText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbPasteText.Image = global::Emoticorg.Properties.Resources.clippy_mirror;
+            this.tsbPasteText.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbPasteText.Name = "tsbPasteText";
+            this.tsbPasteText.Size = new System.Drawing.Size(23, 22);
+            this.tsbPasteText.Text = "PasteText";
+            this.tsbPasteText.Click += new System.EventHandler(this.tsbPasteText_Click);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(54, 22);
+            this.toolStripLabel1.Text = "ASCII Art";
             // 
             // toolStrip1
             // 
@@ -169,6 +198,13 @@
             this.tsbPasteImage.Size = new System.Drawing.Size(23, 22);
             this.tsbPasteImage.Text = "Paste Image";
             this.tsbPasteImage.Click += new System.EventHandler(this.tsbPasteImage_Click);
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(107, 22);
+            this.toolStripLabel2.Text = "Image / Animation";
             // 
             // label3
             // 
@@ -228,52 +264,19 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // toolStrip2
+            // pictureBox1
             // 
-            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbCopyText,
-            this.tsbPasteText,
-            this.toolStripLabel1});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(238, 25);
-            this.toolStrip2.TabIndex = 1;
-            this.toolStrip2.Text = "toolStrip2";
-            // 
-            // tsbCopyText
-            // 
-            this.tsbCopyText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbCopyText.Image = global::Emoticorg.Properties.Resources.clippy;
-            this.tsbCopyText.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbCopyText.Name = "tsbCopyText";
-            this.tsbCopyText.Size = new System.Drawing.Size(23, 22);
-            this.tsbCopyText.Text = "Copy Text";
-            this.tsbCopyText.Click += new System.EventHandler(this.tsbCopyText_Click);
-            // 
-            // tsbPasteText
-            // 
-            this.tsbPasteText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsbPasteText.Image = global::Emoticorg.Properties.Resources.clippy_mirror;
-            this.tsbPasteText.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbPasteText.Name = "tsbPasteText";
-            this.tsbPasteText.Size = new System.Drawing.Size(23, 22);
-            this.tsbPasteText.Text = "PasteText";
-            this.tsbPasteText.Click += new System.EventHandler(this.tsbPasteText_Click);
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(54, 22);
-            this.toolStripLabel1.Text = "ASCII Art";
-            // 
-            // toolStripLabel2
-            // 
-            this.toolStripLabel2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel2.Name = "toolStripLabel2";
-            this.toolStripLabel2.Size = new System.Drawing.Size(107, 22);
-            this.toolStripLabel2.Text = "Image / Animation";
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 25);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(244, 313);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 4;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragDrop);
+            this.pictureBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragEnter);
+            this.pictureBox1.DragLeave += new System.EventHandler(this.pictureBox1_DragLeave);
             // 
             // EditForm
             // 
@@ -295,6 +298,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbName);
             this.Name = "EditForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "EditForm";
             this.Load += new System.EventHandler(this.EditForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -303,11 +307,11 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

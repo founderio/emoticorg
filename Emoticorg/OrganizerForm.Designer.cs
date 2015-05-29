@@ -29,8 +29,8 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Recent Emoticons");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("All Emoticons");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Recent Emoticons");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("All Emoticons");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrganizerForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
@@ -49,6 +49,7 @@
             this.exportRawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblVersion = new System.Windows.Forms.ToolStripLabel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -71,7 +72,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listView1);
             this.splitContainer1.Panel2.Controls.Add(this.toolStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(737, 349);
+            this.splitContainer1.Size = new System.Drawing.Size(734, 342);
             this.splitContainer1.SplitterDistance = 201;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -83,19 +84,19 @@
             this.treeView1.ImageList = this.imageList1;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            treeNode3.ImageKey = "history";
-            treeNode3.Name = "Recent";
-            treeNode3.SelectedImageKey = "history";
-            treeNode3.Text = "Recent Emoticons";
-            treeNode4.ImageKey = "database";
-            treeNode4.Name = "All";
-            treeNode4.SelectedImageKey = "database";
-            treeNode4.Text = "All Emoticons";
+            treeNode1.ImageKey = "history";
+            treeNode1.Name = "Recent";
+            treeNode1.SelectedImageKey = "history";
+            treeNode1.Text = "Recent Emoticons";
+            treeNode2.ImageKey = "database";
+            treeNode2.Name = "All";
+            treeNode2.SelectedImageKey = "database";
+            treeNode2.Text = "All Emoticons";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode3,
-            treeNode4});
+            treeNode1,
+            treeNode2});
             this.treeView1.SelectedImageIndex = 0;
-            this.treeView1.Size = new System.Drawing.Size(201, 349);
+            this.treeView1.Size = new System.Drawing.Size(201, 342);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             this.treeView1.Enter += new System.EventHandler(this.treeView1_Enter);
@@ -116,7 +117,7 @@
             this.listView1.Location = new System.Drawing.Point(0, 25);
             this.listView1.Name = "listView1";
             this.listView1.OwnerDraw = true;
-            this.listView1.Size = new System.Drawing.Size(532, 324);
+            this.listView1.Size = new System.Drawing.Size(529, 317);
             this.listView1.SmallImageList = this.imageList2;
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -141,10 +142,11 @@
             this.toolStripSeparator1,
             this.btnCopy,
             this.btnNewEmoticon,
-            this.toolStripDropDownButton1});
+            this.toolStripDropDownButton1,
+            this.lblVersion});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(532, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(529, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -233,15 +235,24 @@
             this.importToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.importToolStripMenuItem.Text = "Import";
             // 
+            // lblVersion
+            // 
+            this.lblVersion.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.lblVersion.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(96, 22);
+            this.lblVersion.Text = "Emoticorg {0}.{1}";
+            // 
             // OrganizerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(737, 349);
+            this.ClientSize = new System.Drawing.Size(734, 342);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = global::Emoticorg.Properties.Resources.logo;
+            this.MinimumSize = new System.Drawing.Size(750, 380);
             this.Name = "OrganizerForm";
             this.Text = "Organizer";
-            this.Icon = Properties.Resources.logo;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OrganizerForm_FormClosed);
             this.Load += new System.EventHandler(this.OrganizerForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -274,6 +285,7 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripButton btnCopy;
         private System.Windows.Forms.ImageList imageList2;
+        private System.Windows.Forms.ToolStripLabel lblVersion;
 	}
 }
 

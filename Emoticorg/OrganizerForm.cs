@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -34,6 +35,8 @@ namespace Emoticorg
 
         private void OrganizerForm_Load(object sender, EventArgs e)
         {
+            Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            lblVersion.Text = string.Format(lblVersion.Text, appVersion.Major, appVersion.Minor);
             checker = new UpdateChecker("founderio", "emoticorg");
             checker.CheckUpdate(UpdateType.Major).ContinueWith(continuation =>
             {

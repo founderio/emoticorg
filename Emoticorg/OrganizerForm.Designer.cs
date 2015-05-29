@@ -241,6 +241,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "OrganizerForm";
             this.Text = "Organizer";
+            this.Icon = Properties.Resources.logo;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OrganizerForm_FormClosed);
             this.Load += new System.EventHandler(this.OrganizerForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);

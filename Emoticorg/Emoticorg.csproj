@@ -54,6 +54,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GitHubUpdate, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -157,10 +160,13 @@
     <Content Include="lib\Octokit.dll" />
     <Content Include="lib\Semver.dll" />
     <Content Include="lib\System.Data.SQLite.DLL" />
+    <Content Include="Resources\logo.ico" />
+    <Content Include="Resources\logo.png" />
     <None Include="Resources\clippy_mirror.png" />
     <None Include="Resources\clippy.png" />
     <None Include="Resources\file-symlink-file_64_gray.png" />
     <None Include="Resources\device-desktop.png" />
+    <None Include="Resources\logo.svg" />
     <None Include="Resources\plus.png" />
     <None Include="Resources\x.png" />
     <None Include="Resources\search.png" />

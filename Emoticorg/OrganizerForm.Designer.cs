@@ -35,7 +35,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.listView1 = new DoubleBufferedListView();
+            this.listView1 = new Emoticorg.DoubleBufferedListView();
             this.imageList2 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -282,10 +282,10 @@
         private System.Windows.Forms.ToolStripMenuItem exportRawToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ToolStripButton btnCopy;
         private System.Windows.Forms.ImageList imageList2;
         private System.Windows.Forms.ToolStripLabel lblVersion;
+        private DoubleBufferedListView listView1;
 	}
 }
 

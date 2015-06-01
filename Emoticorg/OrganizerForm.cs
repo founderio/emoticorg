@@ -336,7 +336,20 @@ namespace Emoticorg
                     img.Dispose();
                 }
                 store.UseEmoticon(emot.guid);
-                PopulateView(query);
+
+                // Refresh the view if we are in the Recent Emoticons Tab
+                if (treeView1.SelectedNode != null && treeView1.SelectedNode.Name == "Recent")
+                {
+                    PopulateView(query);
+                    // Select the first item, as that is the last used one.
+                    listView1.SelectedIndices.Clear();
+                    if (count > 0)
+                    {
+                        listView1.SelectedIndices.Add(0);
+                        listView1.FocusedItem = listView1.Items[0];
+                        listView1.FocusedItem.EnsureVisible();
+                    }
+                }
             }
         }
     }

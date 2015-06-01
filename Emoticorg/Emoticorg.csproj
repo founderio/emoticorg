@@ -94,6 +94,9 @@
     <Compile Include="CatchingPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DoubleBufferedListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="EditForm.cs">
       <SubType>Form</SubType>
     </Compile>

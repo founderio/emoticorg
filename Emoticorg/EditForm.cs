@@ -123,11 +123,22 @@ namespace Emoticorg
                             ImageFormat imgRawFormat = img.RawFormat;
                             if (imgRawFormat == null)
                             {
+                                // No known Format? Png. Just to be sure.
                                 img.Save(ms, ImageFormat.Png);
                             }
                             else
                             {
-                                img.Save(ms, img.RawFormat);
+                                // Images with e.g. Format "MemoryBmp" do not have encoders. So, we first check if we have an encoder.
+                                ImageCodecInfo encoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(codec => codec.FormatID == imgRawFormat.Guid);
+                                if (encoder == null)
+                                {
+                                    // If not, just save as PNG.
+                                    img.Save(ms, ImageFormat.Png);
+                                }
+                                else
+                                {
+                                    img.Save(ms, img.RawFormat);
+                                }
                             }
                             emoticon.data = ms.ToArray();
                         }
@@ -137,7 +148,14 @@ namespace Emoticorg
                         }
                     }
                 }
-                SetImageFromBytes(emoticon.data);
+                if (emoticon.data == null)
+                {
+                    ImageData = null;
+                }
+                else
+                {
+                    SetImageFromBytes(emoticon.data);
+                }
             }
         }
 
@@ -148,20 +166,6 @@ namespace Emoticorg
         private void pictureBox1_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Copy;
-            string[] formats = e.Data.GetFormats();
-            Console.WriteLine("Formats:");
-            foreach (String format in formats)
-            {
-                Console.WriteLine(format);
-            }
-            foreach (String format in e.Data.GetFormats(true))
-            {
-                if (!formats.Contains(format))
-                {
-                    Console.WriteLine("Convertable:" + format);
-                }
-            }
-            Console.WriteLine("Formats End.");
             if (!backupUsed)
             {
                 backup = pictureBox1.Image;

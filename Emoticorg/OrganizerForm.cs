@@ -37,6 +37,7 @@ namespace Emoticorg
         {
             Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
             lblVersion.Text = string.Format(lblVersion.Text, appVersion.Major, appVersion.Minor);
+
             checker = new UpdateChecker("founderio", "emoticorg");
             checker.CheckUpdate(UpdateType.Major).ContinueWith(continuation =>
             {
@@ -66,6 +67,11 @@ namespace Emoticorg
                 MessageBox.Show("Error loading database:\n" + ex.ToString(), "Error Loading Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
+
+            if (treeView1.Nodes.Count > 0)
+            {
+                treeView1.SelectedNode = treeView1.Nodes[0];
+            }
         }
 
         private void OrganizerForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -78,6 +84,7 @@ namespace Emoticorg
         private void tbClear_Click(object sender, EventArgs e)
         {
             tbSearch.Clear();
+            tbSearch.Focus();
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
@@ -351,6 +358,16 @@ namespace Emoticorg
                     }
                 }
             }
+        }
+
+        private void toolStripLabel1_Click(object sender, EventArgs e)
+        {
+            tbSearch.Focus();
+        }
+
+        private void tbSearch_Enter(object sender, EventArgs e)
+        {
+            tbSearch.SelectAll();
         }
     }
 }

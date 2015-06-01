@@ -366,7 +366,10 @@ namespace Emoticorg
 
         private void tsbCopyImage_Click(object sender, EventArgs e)
         {
-            Clipboard.SetImage(ImageData);
+            if (ImageData != null)
+            {
+                Clipboard.SetImage(ImageData);
+            }
         }
 
         private void tsbPasteImage_Click(object sender, EventArgs e)
@@ -379,7 +382,10 @@ namespace Emoticorg
 
         private void tsbCopyText_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(TextData);
+            if (TextData != null)
+            {
+                Clipboard.SetText(TextData);
+            }
         }
 
         private void tsbPasteText_Click(object sender, EventArgs e)

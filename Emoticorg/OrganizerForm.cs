@@ -221,16 +221,17 @@ namespace Emoticorg
             Emoticon emoticon = RetrieveEmoticon(e.ItemIndex);
             if (emoticon != null)
             {
+                Rectangle itemRect = this.listView1.GetItemRect(e.ItemIndex, ItemBoundsPortion.Icon);
                 if (emoticon.type == Emoticon.TYPE_ASCII)
                 {
                     string text = UnicodeEncoding.UTF8.GetString(emoticon.data);
-                    e.Graphics.DrawString(text, listView1.Font, fontBrush, this.listView1.GetItemRect(e.ItemIndex, ItemBoundsPortion.Icon));
+                    DrawTextScaled(e.Graphics, text, listView1.Font, fontBrush, itemRect, 0.5f, 1.0f);
                 }
                 else if (emoticon.type == Emoticon.TYPE_IMAGE)
                 {
                     MemoryImage img = new MemoryImage(emoticon.data);
                     Clipboard.SetImage(img.Image);
-                    e.Graphics.DrawImage(img.Image, this.listView1.GetItemRect(e.ItemIndex, ItemBoundsPortion.Icon));
+                    DrawImageScaled(e.Graphics, img.Image, itemRect, 0.5f, 1.0f);
                     img.Dispose();
                 }
             }
@@ -240,6 +241,48 @@ namespace Emoticorg
                 e.DrawText(TextFormatFlags.Bottom);
                 //e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
             }
+        }
+
+        public static Rectangle DrawTextScaled(Graphics g, string txt, Font font, Brush brush, Rectangle targetRect, float centerH, float centerV)
+        {
+            SizeF textSize = g.MeasureString(txt, font);
+
+            Rectangle drawRect = new Rectangle(targetRect.X, targetRect.Y,
+                Math.Min((int)Math.Ceiling(textSize.Width), targetRect.Width), Math.Min((int)Math.Ceiling(textSize.Height), targetRect.Height));
+            if (drawRect.Width < targetRect.Width)
+            {
+                int offset = targetRect.Width - drawRect.Width;
+                drawRect.X += (int)(offset * centerH);
+            }
+            if (drawRect.Height < targetRect.Height)
+            {
+                int offset = targetRect.Height - drawRect.Height;
+                drawRect.Y += (int)(offset * centerV);
+            }
+            g.DrawString(txt, font, brush, drawRect);
+            return drawRect;
+        }
+
+        public static Rectangle DrawImageScaled(Graphics g, Image img, Rectangle targetRect, float centerH, float centerV)
+        {
+            float factorWidth = Math.Min(img.Width, targetRect.Width) / (float)img.Width;
+            float factorHeight = Math.Min(img.Height, targetRect.Height) / (float)img.Height;
+            float scaleFactor = Math.Min(factorHeight, factorWidth);
+
+            Rectangle drawRect = new Rectangle(targetRect.X, targetRect.Y,
+                (int)(img.Width * scaleFactor), (int)(img.Height * scaleFactor));
+            if (drawRect.Width < targetRect.Width)
+            {
+                int offset = targetRect.Width - drawRect.Width;
+                drawRect.X += (int)(offset * centerH);
+            }
+            if (drawRect.Height < targetRect.Height)
+            {
+                int offset = targetRect.Height - drawRect.Height;
+                drawRect.Y += (int)(offset * centerV);
+            }
+            g.DrawImage(img, drawRect);
+            return drawRect;
         }
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)

@@ -22,9 +22,9 @@ namespace Emoticorg
             pictureBox1.AllowDrop = true;
         }
 
-        private void EditForm_Load(object sender, EventArgs e)
+        private void DisposeStuff()
         {
-
+            memImage.Dispose();
         }
 
         private Emoticon emoticon;

@@ -33,6 +33,11 @@ namespace Emoticorg
             fontBrush = new SolidBrush(listView1.ForeColor);
         }
 
+        private void DisposeStuff()
+        {
+            fontBrush.Dispose();
+        }
+
         private void OrganizerForm_Load(object sender, EventArgs e)
         {
             Version appVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -60,12 +65,36 @@ namespace Emoticorg
             {
                 Directory.CreateDirectory(dataDir);
                 store = EmoticonStore.openStore(Path.Combine(dataDir, "store.sqlite"));
-                //TODO: Handle store upgrade in a later version if required.
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading database:\n" + ex.ToString(), "Error Loading Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                store = null;
                 Application.Exit();
+            }
+
+            if (!store.IsReadable)
+            {
+                MessageBox.Show("This Emoticon store was created by a different application version and cannot be converted.\nSupported Version: " + EmoticonStore.VERSION + " Loaded Version: " + store.LoadedVersionString, "Error Loading Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                store = null;
+                Application.Exit();
+            }
+            else if (store.NeedsUpgrade)
+            {
+                DialogResult result = MessageBox.Show("This Emoticon store needs be converted before usage.\nWARNING: This may break compatibility with lower application versions!\nTarget Version: " + EmoticonStore.VERSION + " Loaded Version: " + store.LoadedVersionString + "\n\nDo you want to convert?", "Conversion Needed", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    try
+                    {
+                        store.Upgrade();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error upgrading database:\n" + ex.ToString(), "Error Upgrading Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        store = null;
+                        Application.Exit();
+                    }
+                }
             }
 
             if (treeView1.Nodes.Count > 0)
@@ -76,7 +105,10 @@ namespace Emoticorg
 
         private void OrganizerForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            store.Close();
+            if (store != null)
+            {
+                store.Close();
+            }
             fontBrush.Dispose();
             editForm.Dispose();
         }

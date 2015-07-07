@@ -4,12 +4,20 @@ using System.Data.Common;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
+using Semver;
 
 namespace Emoticorg
 {
     public class EmoticonStore
     {
-        public const string VERSION = "1.0";
+        public const string VERSION = "1.1";
+        public SemVersion CURRENT_VERSION = SemVersion.Parse(VERSION);
+
+        private string loadedVersionString;
+        private SemVersion loadedVersion;
+
+        private bool readable = false;
+        private bool needsUpgrade = false;
 
         public static EmoticonStore openStore(string file)
         {
@@ -35,6 +43,70 @@ namespace Emoticorg
             {
                 InitDatabase();
             }
+            RefreshVersion();
+        }
+
+        private void RefreshVersion()
+        {
+            using (DbCommand command = conn.CreateCommand())
+            {
+                command.CommandText = "SELECT value FROM Emoticorg WHERE name='version';";
+                loadedVersionString = (string)command.ExecuteScalar();
+            }
+            this.loadedVersion = SemVersion.Parse(loadedVersionString);
+            if (loadedVersion == CURRENT_VERSION)
+            {
+                readable = true;
+            }
+            else if (loadedVersion < CURRENT_VERSION)
+            {
+                needsUpgrade = true;
+                if (CanUpgrade(loadedVersionString))
+                {
+                    readable = true;
+                }
+            }
+        }
+
+        public bool IsReadable
+        {
+            get
+            {
+                return readable;
+            }
+        }
+
+        public bool NeedsUpgrade
+        {
+            get
+            {
+                return needsUpgrade;
+            }
+        }
+
+        public SemVersion LoadedVersion
+        {
+            get
+            {
+                return loadedVersion;
+            }
+        }
+
+        public string LoadedVersionString
+        {
+            get
+            {
+                return loadedVersionString;
+            }
+        }
+
+        public static bool CanUpgrade(string version)
+        {
+            if (version == "1.0")
+            {
+                return true;
+            }
+            return false;
         }
 
         public bool CheckTableExists(string tableName)
@@ -47,7 +119,7 @@ namespace Emoticorg
 
         }
 
-        public void InitDatabase()
+        private void InitDatabase()
         {
             using (DbTransaction transaction = conn.BeginTransaction())
             {
@@ -62,14 +134,14 @@ namespace Emoticorg
                         command.CommandText = "INSERT INTO Emoticorg (name, value) VALUES ('version', '" + VERSION + "');";
                         command.ExecuteNonQuery();
 
-                        command.CommandText = "CREATE TABLE Emoticon (guid TEXT, name TEXT, category TEXT, data BLOB, lastUsed INTEGER, type INTEGER, PRIMARY KEY(guid));";
+                        command.CommandText = "CREATE TABLE Emoticon (guid TEXT, name TEXT, category TEXT, data BLOB, lastUsed INTEGER, type INTEGER, " +
+                        "parentGuid TEXT, keyboardEquivalent TEXT, keyboardRegex TEXT, flags INTEGER, " +
+                        "PRIMARY KEY(guid));";
                         command.ExecuteNonQuery();
 
                         command.CommandText = "CREATE TABLE EmoticonKeywords (guid TEXT, keyword TEXT, PRIMARY KEY(guid, keyword));";
                         command.ExecuteNonQuery();
                     }
-
-                    InsertTestData();
 
                     transaction.Commit();
                 }
@@ -80,22 +152,49 @@ namespace Emoticorg
             }
         }
 
-        private void InsertTestData()
+        public void Upgrade()
         {
-            using (DbCommand command = conn.CreateCommand())
+            RefreshVersion();
+            if (loadedVersionString == "1.0")
             {
+                using (DbTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
 
-                command.CommandText = "INSERT INTO Emoticon (guid, name, category, lastUsed) VALUES ('someguid1', 'name ahjo', 'cat1', " + DateTime.Now.Ticks + ");";
-                command.ExecuteNonQuery();
+                        using (DbCommand command = conn.CreateCommand())
+                        {
 
-                command.CommandText = "INSERT INTO Emoticon (guid, name, category, lastUsed) VALUES ('someguid2', 'name sdfsd', 'cat2', " + DateTime.Now.Ticks + ");";
-                command.ExecuteNonQuery();
 
-                command.CommandText = "INSERT INTO Emoticon (guid, name, category, lastUsed) VALUES ('someguid3', 'name raherjo', 'cat1', " + DateTime.Now.Ticks + ");";
-                command.ExecuteNonQuery();
+                            command.CommandText = "ALTER TABLE Emoticon ADD COLUMN parentGuid TEXT;";
+                            command.ExecuteNonQuery();
+                            command.CommandText = "ALTER TABLE Emoticon ADD COLUMN keyboardEquivalent TEXT;";
+                            command.ExecuteNonQuery();
+                            command.CommandText = "ALTER TABLE Emoticon ADD COLUMN keyboardRegex TEXT;";
+                            command.ExecuteNonQuery();
+                            command.CommandText = "ALTER TABLE Emoticon ADD COLUMN flags INTEGER;";
+                            command.ExecuteNonQuery();
 
-                command.CommandText = "INSERT INTO Emoticon (guid, name, category, lastUsed) VALUES ('someguid4', 'name mnbv', 'cat2', " + DateTime.Now.Ticks + ");";
-                command.ExecuteNonQuery();
+
+                            command.CommandText = "UPDATE Emoticorg SET value = '" + VERSION + "' WHERE name='version';";
+                            command.ExecuteNonQuery();
+                            command.CommandText = "INSERT INTO Emoticorg (name, value) VALUES ('upgradeTo" + VERSION + "', '" + loadedVersionString + "');";
+                            command.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+
+                        RefreshVersion();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                    }
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Cannot upgrade this version.");
             }
         }
 
@@ -124,6 +223,15 @@ namespace Emoticorg
             return this.CountQuery("Emoticon", query, filter);
         }
 
+        /// <summary>
+        /// Queries emoticons from the database, using offset &amp; count.
+        /// The parameters are inserted as query like so: 'SELECT * FROM Emoticon [query] LIMIT [count] OFFSET [offset]'.
+        /// </summary>
+        /// <param name="query">A query string, something along the lines of 'WHERE something ORDER BY else ASC'</param>
+        /// <param name="filter">If non-null, this adds a parameter value for 'filter'. This parameter has to be in the query for this to work.</param>
+        /// <param name="offset">Zero-based index to offset the results</param>
+        /// <param name="count">Amount of emoticons to query</param>
+        /// <returns></returns>
         public List<Emoticon> PartialQueryEmoticons(string query, string filter, int offset, int count)
         {
             using (DbCommand command = conn.CreateCommand())
@@ -140,6 +248,11 @@ namespace Emoticorg
             }
         }
 
+        /// <summary>
+        /// Reads database return values into a list of Emoticons.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         public List<Emoticon> ParseEmoticonResult(DbDataReader reader)
         {
             List<Emoticon> emoticons = new List<Emoticon>();
@@ -193,11 +306,15 @@ namespace Emoticorg
             return emoticons;
         }
 
+        /// <summary>
+        /// Updates the database with the passed emoticon or creates a new one.
+        /// A new emoticon is created when the emoticon GUID is null.
+        /// </summary>
+        /// <param name="emot"></param>
         public void UpdateEmoticon(Emoticon emot)
         {
             using (DbCommand command = conn.CreateCommand())
             {
-                //TODO: command.Prepare() + command.Parameters
                 if (emot.guid == null)
                 {
                     emot.guid = Guid.NewGuid().ToString();
@@ -216,6 +333,8 @@ namespace Emoticorg
                 command.Parameters.Add(new SQLiteParameter("category", emot.category));
                 command.Parameters.Add(new SQLiteParameter("type", emot.type));
                 command.Parameters.Add(new SQLiteParameter("data", emot.data));
+
+                // Only save lastUsed when we actually have used it. Zero means unused
                 if (emot.lastUsed > 0)
                 {
                     command.Parameters.Add(new SQLiteParameter("lastUsed", emot.lastUsed));
@@ -228,6 +347,10 @@ namespace Emoticorg
             }
         }
 
+        /// <summary>
+        /// Marks an emoticon last usage using the current date.
+        /// </summary>
+        /// <param name="guid"></param>
         public void UseEmoticon(string guid)
         {
             using (DbCommand command = conn.CreateCommand())
@@ -239,6 +362,9 @@ namespace Emoticorg
             }
         }
 
+        /// <summary>
+        /// Closes the underlying database connection.
+        /// </summary>
         public void Close()
         {
             conn.Close();

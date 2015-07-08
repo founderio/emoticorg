@@ -248,6 +248,45 @@ namespace Emoticorg
             }
         }
 
+        private string ReadString(DbDataReader reader, string column, string defaultValue)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal))
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return reader.GetString(ordinal);
+            }
+        }
+
+        private int ReadInt(DbDataReader reader, string column, int defaultValue)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal))
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return reader.GetInt32(ordinal);
+            }
+        }
+
+        private long ReadLong(DbDataReader reader, string column, long defaultValue)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal))
+            {
+                return defaultValue;
+            }
+            else
+            {
+                return reader.GetInt64(ordinal);
+            }
+        }
+
         /// <summary>
         /// Reads database return values into a list of Emoticons.
         /// </summary>
@@ -260,9 +299,16 @@ namespace Emoticorg
             {
                 Emoticon emot = new Emoticon();
 
-                string guid = reader.GetString(reader.GetOrdinal("guid"));
-                string name = reader.GetString(reader.GetOrdinal("name"));
-                string category = reader.GetString(reader.GetOrdinal("category"));
+                string guid = ReadString(reader, "guid", "");
+                string name = ReadString(reader, "name", "");
+                string category = ReadString(reader, "category", "");
+
+
+                string parentGuid = ReadString(reader, "parentGuid", "");
+                string keyboardEquivalent = ReadString(reader, "keyboardEquivalent", "");
+                string keyboardRegex = ReadString(reader, "keyboardRegex", "");
+                int flags = ReadInt(reader, "flags", 0);
+
                 object value = reader.GetValue(reader.GetOrdinal("data"));
                 byte[] data;
                 if (value == DBNull.Value)
@@ -273,25 +319,23 @@ namespace Emoticorg
                 {
                     data = (byte[])value;
                 }
-                value = reader.GetValue(reader.GetOrdinal("lastUsed"));
-                long lastUsed;
-                if (value == DBNull.Value)
+                long lastUsed = ReadLong(reader, "lastUsed", 0);
+                int type = ReadInt(reader, "type", -1);
+
+
+                if (keyboardEquivalent != null)
                 {
-                    lastUsed = 0;
+                    string[] keyboardEquivalentSplit = keyboardEquivalent.Split(';');
+
+                    for (int i = 0; i < keyboardEquivalentSplit.Length; i++)
+                    {
+                        keyboardEquivalentSplit[i] = keyboardEquivalentSplit[i].Replace(":,", ";").Replace("::", ":");
+                    }
+                    emot.keyboardEquivalent = keyboardEquivalentSplit;
                 }
                 else
                 {
-                    lastUsed = (long)value;
-                }
-                int type;
-                value = reader.GetValue(reader.GetOrdinal("type"));
-                if (value == DBNull.Value)
-                {
-                    type = -1;
-                }
-                else
-                {
-                    type = (int)(long)value;
+                    emot.keyboardEquivalent = new string[0];
                 }
 
                 emot.guid = guid;
@@ -300,6 +344,9 @@ namespace Emoticorg
                 emot.type = type;
                 emot.data = data;
                 emot.lastUsed = lastUsed;
+                emot.parentGuid = parentGuid;
+                emot.keyboardRegex = keyboardRegex;
+                emot.flags = emot.flags;
 
                 emoticons.Add(emot);
             }
@@ -333,6 +380,25 @@ namespace Emoticorg
                 command.Parameters.Add(new SQLiteParameter("category", emot.category));
                 command.Parameters.Add(new SQLiteParameter("type", emot.type));
                 command.Parameters.Add(new SQLiteParameter("data", emot.data));
+                command.Parameters.Add(new SQLiteParameter("parentGuid", emot.parentGuid));
+                command.Parameters.Add(new SQLiteParameter("keyboardRegex", emot.keyboardRegex));
+                command.Parameters.Add(new SQLiteParameter("flags", emot.flags));
+
+                string[] keyboardEquivalent = emot.keyboardEquivalent;
+
+                if (keyboardEquivalent != null && keyboardEquivalent.Length > 0)
+                {
+                    StringBuilder strBuilder = new StringBuilder(keyboardEquivalent[0].Replace(":", "::").Replace(";", ":,"));
+                    for (int i = 1; i < keyboardEquivalent.Length; i++)
+                    {
+                        strBuilder.Append(';').Append(keyboardEquivalent[i].Replace(":", "::").Replace(";", ":,"));
+                    }
+                    command.Parameters.Add(new SQLiteParameter("keyboardEquivalent", strBuilder.ToString()));
+                }
+                else
+                {
+                    command.Parameters.Add(new SQLiteParameter("keyboardEquivalent", ""));
+                }
 
                 // Only save lastUsed when we actually have used it. Zero means unused
                 if (emot.lastUsed > 0)

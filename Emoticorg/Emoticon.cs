@@ -17,5 +17,9 @@ namespace Emoticorg
         public byte[] data { get; set; }
         public long lastUsed { get; set; }
         public int type { get; set; }
+        public string parentGuid { get; set; }
+        public string keyboardRegex { get; set; }
+        public string[] keyboardEquivalent { get; set; }
+        public int flags { get; set; }
     }
 }

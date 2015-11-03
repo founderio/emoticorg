@@ -277,7 +277,7 @@ namespace Emoticorg
             e.DrawFocusRectangle();
             if (listView1.View != View.Details)
             {
-                e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter);
+                e.DrawText(TextFormatFlags.Bottom | TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix);
             }
         }
 

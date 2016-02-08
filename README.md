@@ -1,8 +1,10 @@
-# Emoticorg
+# ![Emoticorg](docs/logo_32.png) Emoticorg
 
 Emoticorg is an emoticon organizer. Use it to organize images, GIFs, text emoticons.
 
 By default, it creates a data file in %APPDATA%\Emoticorg\store.sqlite
+
+![Emoticorg Organizer](docs/screenshot.png)
 
 ## Requirements
 

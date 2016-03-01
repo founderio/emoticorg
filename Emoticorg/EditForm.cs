@@ -252,9 +252,9 @@ namespace Emoticorg
                 }
                 //TODO: Move loading stuff into background thread
             }
-            catch
+			catch (Exception ex)
             {
-                Console.WriteLine("ERR");
+                Console.WriteLine("ERR: " + ex);
             }
         }
 

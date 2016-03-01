@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using Semver;
@@ -27,11 +26,7 @@ namespace Emoticorg
 
         public static DbConnection openSQLite(string file)
         {
-            SQLiteConnectionStringBuilder strBuild = new SQLiteConnectionStringBuilder();
-            strBuild.Add("Data Source", file);
-            SQLiteConnection conn = new SQLiteConnection(strBuild.ToString());
-            conn.Open();
-            return conn;
+			return SQLiteAdapter.Connect (file);
         }
 
         private DbConnection conn;
@@ -46,6 +41,9 @@ namespace Emoticorg
             RefreshVersion();
         }
 
+		/// <summary>
+		/// Reloads the version from the database & populates the status info for readable & needsUpgrade.
+		/// </summary>
         private void RefreshVersion()
         {
             using (DbCommand command = conn.CreateCommand())
@@ -203,7 +201,9 @@ namespace Emoticorg
             using (DbCommand command = conn.CreateCommand())
             {
                 string commandText = "SELECT COUNT(guid) FROM " + table + " " + query;
-                int pos = commandText.IndexOf("ORDER BY", StringComparison.InvariantCultureIgnoreCase);
+
+				// Strip the ORDER BY clause from the query, as count() does not support that.
+				int pos = commandText.IndexOf("ORDER BY", StringComparison.InvariantCultureIgnoreCase);
                 if (pos > -1)
                 {
                     commandText = commandText.Substring(0, pos);
@@ -211,7 +211,7 @@ namespace Emoticorg
                 command.CommandText = commandText;
                 if (filter != null)
                 {
-                    command.Parameters.Add(new SQLiteParameter("filter", '%' + filter + '%'));
+					command.Parameters.Add(SQLiteAdapter.NewParameter("filter", '%' + filter + '%'));
                 }
 
                 return (int)(long)command.ExecuteScalar();
@@ -236,10 +236,10 @@ namespace Emoticorg
         {
             using (DbCommand command = conn.CreateCommand())
             {
-                command.CommandText = "SELECT * FROM Emoticon " + query + " LIMIT " + count + " OFFSET " + offset;
+				command.CommandText = string.Format("SELECT * FROM Emoticon {0} LIMIT {1} OFFSET {2}",  query , count, offset);
                 if (filter != null)
                 {
-                    command.Parameters.Add(new SQLiteParameter("filter", '%' + filter + '%'));
+					command.Parameters.Add(SQLiteAdapter.NewParameter("filter", '%' + filter + '%'));
                 }
                 using (DbDataReader reader = command.ExecuteReader())
                 {
@@ -375,14 +375,14 @@ namespace Emoticorg
                     command.Prepare();
 
                 }
-                command.Parameters.Add(new SQLiteParameter("guid", emot.guid));
-                command.Parameters.Add(new SQLiteParameter("name", emot.name));
-                command.Parameters.Add(new SQLiteParameter("category", emot.category));
-                command.Parameters.Add(new SQLiteParameter("type", emot.type));
-                command.Parameters.Add(new SQLiteParameter("data", emot.data));
-                command.Parameters.Add(new SQLiteParameter("parentGuid", emot.parentGuid));
-                command.Parameters.Add(new SQLiteParameter("keyboardRegex", emot.keyboardRegex));
-                command.Parameters.Add(new SQLiteParameter("flags", emot.flags));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("guid", emot.guid));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("name", emot.name));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("category", emot.category));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("type", emot.type));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("data", emot.data));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("parentGuid", emot.parentGuid));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("keyboardRegex", emot.keyboardRegex));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("flags", emot.flags));
 
                 string[] keyboardEquivalent = emot.keyboardEquivalent;
 
@@ -393,21 +393,21 @@ namespace Emoticorg
                     {
                         strBuilder.Append(';').Append(keyboardEquivalent[i].Replace(":", "::").Replace(";", ":,"));
                     }
-                    command.Parameters.Add(new SQLiteParameter("keyboardEquivalent", strBuilder.ToString()));
+					command.Parameters.Add(SQLiteAdapter.NewParameter("keyboardEquivalent", strBuilder.ToString()));
                 }
                 else
                 {
-                    command.Parameters.Add(new SQLiteParameter("keyboardEquivalent", ""));
+					command.Parameters.Add(SQLiteAdapter.NewParameter("keyboardEquivalent", ""));
                 }
 
                 // Only save lastUsed when we actually have used it. Zero means unused
                 if (emot.lastUsed > 0)
                 {
-                    command.Parameters.Add(new SQLiteParameter("lastUsed", emot.lastUsed));
+					command.Parameters.Add(SQLiteAdapter.NewParameter("lastUsed", emot.lastUsed));
                 }
                 else
                 {
-                    command.Parameters.Add(new SQLiteParameter("lastUsed", DBNull.Value));
+					command.Parameters.Add(SQLiteAdapter.NewParameter("lastUsed", DBNull.Value));
                 }
                 command.ExecuteNonQuery();
             }
@@ -422,8 +422,8 @@ namespace Emoticorg
             using (DbCommand command = conn.CreateCommand())
             {
                 command.CommandText = "UPDATE Emoticon SET lastUsed=@lastUsed WHERE guid=@guid";
-                command.Parameters.Add(new SQLiteParameter("guid", guid));
-                command.Parameters.Add(new SQLiteParameter("lastUsed", DateTime.Now.Ticks));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("guid", guid));
+				command.Parameters.Add(SQLiteAdapter.NewParameter("lastUsed", DateTime.Now.Ticks));
                 command.ExecuteNonQuery();
             }
         }

@@ -105,10 +105,16 @@
             this.treeView1.Enter += new System.EventHandler(this.treeView1_Enter);
             // 
             // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "file-directory");
+			// 
+			this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+			this.imageList1.Images.AddRange (new System.Drawing.Image[] {
+				Emoticorg.Properties.Resources.file_directory,
+				Emoticorg.Properties.Resources.history,
+				Emoticorg.Properties.Resources.database
+			});
+			this.imageList1.Images.SetKeyName(0, "file-directory");
             this.imageList1.Images.SetKeyName(1, "history");
             this.imageList1.Images.SetKeyName(2, "database");
             // 

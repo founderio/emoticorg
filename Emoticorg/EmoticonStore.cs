@@ -248,6 +248,26 @@ namespace Emoticorg
             }
         }
 
+		/// <summary>
+		/// Read all emoticon categories from the database.
+		/// </summary>
+		/// <returns>The categories.</returns>
+		public List<string> GetCategories() {
+			using (DbCommand command = conn.CreateCommand ()) {
+				command.CommandText = "SELECT DISTINCT category FROM Emoticon ORDER BY category ASC";
+				List<string> groups = new List<string> ();
+				using (DbDataReader reader = command.ExecuteReader()) {
+					while (reader.Read ()) {
+						string group = ReadString (reader, "category", "");
+						if ("" != group) {
+							groups.Add (group);
+						}
+					}
+				}
+				return groups;
+			}
+		}
+
         private string ReadString(DbDataReader reader, string column, string defaultValue)
         {
             int ordinal = reader.GetOrdinal(column);

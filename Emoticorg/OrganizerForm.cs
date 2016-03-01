@@ -24,6 +24,7 @@ namespace Emoticorg
         private List<Emoticon> cache;
         private Brush fontBrush = Brushes.Black;
         private EditForm editForm;
+		private List<TreeNode> categoryNodes;
 
         public OrganizerForm()
         {
@@ -31,11 +32,19 @@ namespace Emoticorg
             InitializeComponent();
             editForm = new EditForm();
             fontBrush = new SolidBrush(listView1.ForeColor);
+			categoryNodes = new List<TreeNode> ();
         }
 
         private void DisposeStuff()
         {
-            fontBrush.Dispose();
+			if (store != null)
+			{
+				store.Close();
+				store = null;
+			}
+			fontBrush.Dispose();
+			editForm.Dispose();
+			categoryNodes.Clear ();
         }
 
         private void OrganizerForm_Load(object sender, EventArgs e)
@@ -101,16 +110,12 @@ namespace Emoticorg
             {
                 treeView1.SelectedNode = treeView1.Nodes[0];
             }
+			RefreshCategories ();
         }
 
         private void OrganizerForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (store != null)
-            {
-                store.Close();
-            }
-            fontBrush.Dispose();
-            editForm.Dispose();
+			DisposeStuff ();
         }
 
         private void tbClear_Click(object sender, EventArgs e)
@@ -181,13 +186,15 @@ namespace Emoticorg
                 {
                     query += filterString + "AND ";
                 }
-                // 96 hours (for now)
                 query += "category = '" + category + "' ORDER BY name ASC";
             }
             PopulateView(query);
         }
 
-
+		/// <summary>
+		/// Populates the view with a new query, clearing the cache & refreshing the listView.
+		/// </summary>
+		/// <param name="query">Query.</param>
         private void PopulateView(string query)
         {
             this.query = query;
@@ -206,6 +213,33 @@ namespace Emoticorg
             listView1.VirtualListSize = count;
             listView1.Refresh();
         }
+
+		private void RefreshCategories() {
+			List<string> categories = store.GetCategories ();
+			int diff = categoryNodes.Count - categories.Count;
+			for(int i = 0; i < categories.Count; i++) {
+				string cat = categories [i];
+				TreeNode node;
+				if(i == categoryNodes.Count) {
+					node = new TreeNode (cat);
+					categoryNodes.Add (node);
+				} else {
+					node = categoryNodes [i];
+					node.Text = cat;
+				}
+				node.Tag = cat;
+			}
+			if(diff > 0) {
+				int first = categoryNodes.Count - diff;
+				for(int i = first; i < categoryNodes.Count; i++) {
+					treeView1.Nodes.Remove (categoryNodes [i]);
+				}
+				categoryNodes.RemoveRange (first, diff);
+			} else if(diff < 0) {
+				int first = categoryNodes.Count + diff;
+				treeView1.Nodes.AddRange (categoryNodes.GetRange (first, -diff).ToArray());
+			}
+		}
 
         private void LoadCache(int offset, int count)
         {
@@ -330,7 +364,8 @@ namespace Emoticorg
                 int idx = listView1.SelectedIndices[0];
                 Emoticon emot = RetrieveEmoticon(idx);
                 editForm.ShowEdit(this, emot);
-                store.UpdateEmoticon(emot);
+				store.UpdateEmoticon(emot);
+				RefreshCategories ();
             }
         }
 
@@ -347,7 +382,8 @@ namespace Emoticorg
             Emoticon emoticon = editForm.ShowNew(this);
             if (emoticon != null)
             {
-                store.UpdateEmoticon(emoticon);
+				store.UpdateEmoticon(emoticon);
+				RefreshCategories ();
                 PopulateView(this.query);
             }
         }

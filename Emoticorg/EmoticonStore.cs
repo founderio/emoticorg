@@ -366,7 +366,7 @@ namespace Emoticorg
                 emot.lastUsed = lastUsed;
                 emot.parentGuid = parentGuid;
                 emot.keyboardRegex = keyboardRegex;
-                emot.flags = emot.flags;
+                emot.flags = flags;
 
                 emoticons.Add(emot);
             }

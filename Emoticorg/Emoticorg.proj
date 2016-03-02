@@ -4,10 +4,12 @@
     <ProductName>Emoticorg</ProductName>
     <ReleaseOutput>.\release</ReleaseOutput>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <!-- As xbuild is too stubborn to take that property from the csproj: -->
+    <Win32Icon>Resources\logo.ico</Win32Icon>
   </PropertyGroup>
   <Target Name="Build">
     <Message Text="Building $(ProductName) $(Configuration)" />
-    <MSBuild Projects="$(ProductName).csproj" Targets="Build" />
+    <MSBuild Projects="$(ProductName).csproj" Targets="Build" Properties="win32icon=$(Win32Icon)" />
   </Target>
   <Target Name="Release" DependsOnTargets="Build" Condition="$(Configuration) == 'Release'">
     <MakeDir Directories="$(ReleaseOutput)" />

@@ -59,10 +59,6 @@ namespace Emoticorg
 			return Type.GetType ("Mono.Runtime") != null;
 		}
 
-		public static bool IsMonoSqliteAvailable() {
-			return Type.GetType ("Mono.Data.Sqlite.SqliteConnection") != null;
-		}
-
 	}
 }
 
